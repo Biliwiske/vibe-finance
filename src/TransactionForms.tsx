@@ -84,7 +84,7 @@ export function BankSelectorModal({ onSelect, onClose }: { onSelect: (id: string
   const filtered = FULL_BANKS.filter(b => b.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-sm overflow-hidden" onClick={onClose}>
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-0 sm:p-4 safe-area-fullscreen bg-black/75 backdrop-blur-sm overflow-hidden" onClick={onClose}>
       <motion.div 
         initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -176,7 +176,7 @@ export function FullCategorySelector({ type, categories, onSelect, onAdd, onClos
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-sm overflow-hidden" onClick={onClose}>
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-0 sm:p-4 safe-area-fullscreen bg-black/75 backdrop-blur-sm overflow-hidden" onClick={onClose}>
       <motion.div 
         initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -467,7 +467,7 @@ export function NewTransactionForm({
 
   return (
     <div 
-      className="fixed inset-0 z-[150] flex items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-sm overflow-hidden"
+      className="fixed inset-0 z-[150] flex items-center justify-center p-0 sm:p-4 safe-area-fullscreen bg-black/75 backdrop-blur-sm overflow-hidden"
       onClick={cancel}
     >
       <motion.div 
@@ -977,7 +977,7 @@ export function NewTransactionForm({
         <AnimatePresence>
           {showAccountSelector && (
             <div 
-              className="fixed inset-0 z-[210] flex items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm overflow-hidden" 
+              className="fixed inset-0 z-[210] flex items-center justify-center p-0 sm:p-4 safe-area-fullscreen bg-black/80 backdrop-blur-sm overflow-hidden" 
               onClick={() => setShowAccountSelector(false)}
             >
               <motion.div 
@@ -1099,14 +1099,14 @@ export function CategoryForm({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[220] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" 
+      className="fixed inset-0 z-[220] flex items-center justify-center p-4 safe-area-overlay bg-black/80 backdrop-blur-sm" 
       onClick={cancel}
     >
       <motion.div 
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="w-full max-w-md bg-[#161b22] border border-[#30363d] rounded-2xl p-5 flex flex-col gap-4 shadow-2xl max-h-[90vh] overflow-y-auto" 
+        className="safe-area-dialog w-full max-w-md bg-[#161b22] border border-[#30363d] rounded-2xl p-5 flex flex-col gap-4 shadow-2xl max-h-[90vh] overflow-y-auto" 
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between pb-2 border-b border-[#30363d]/50">

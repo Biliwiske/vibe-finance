@@ -1262,7 +1262,7 @@ export function ExportModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[250] flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-md">
+    <div className="fixed inset-0 z-[250] flex items-center justify-center p-3 sm:p-6 safe-area-overlay-large bg-black/75 backdrop-blur-md">
       <motion.div 
         initial={{ opacity: 0, scale: 0.96, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}

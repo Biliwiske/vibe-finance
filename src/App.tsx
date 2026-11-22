@@ -25,14 +25,14 @@ function Modal({ children, onClose, title }: { children: React.ReactNode, onClos
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm" 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 safe-area-overlay bg-black/60 backdrop-blur-sm" 
       onClick={onClose}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="w-full max-w-lg bg-[#161b22] border border-[#30363d] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+        className="safe-area-dialog w-full max-w-lg bg-[#161b22] border border-[#30363d] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
         onClick={(e: any) => e.stopPropagation()}
       >
         {title && (
@@ -1131,7 +1131,7 @@ export default function App() {
 
   if (session && isForeignLocalData) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-[#0d1117] px-4 py-8 text-neutral-200">
+      <main className="safe-area-page flex items-center justify-center bg-[#0d1117] text-neutral-200">
         <section className="w-full max-w-md rounded-2xl border border-[#30363d] bg-[#161b22] p-6 text-center shadow-2xl">
           <h1 className="text-xl font-semibold text-white">Vibe Finance</h1>
           <p className="mt-3 text-sm text-neutral-400">
@@ -1181,14 +1181,14 @@ export default function App() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row h-screen w-full bg-[#0d1117] text-neutral-200 overflow-hidden font-sans">
+    <div className="app-viewport flex flex-col lg:flex-row w-full bg-[#0d1117] text-neutral-200 overflow-hidden font-sans">
       
       {/* Sidebar */}
-      <aside className="w-full md:w-64 bg-[#161b22] border-b md:border-b-0 md:border-r border-[#30363d] flex flex-col shrink-0 z-20">
-        <div className="p-4 md:p-6 flex items-center gap-3 border-b border-[#30363d] shrink-0">
+      <aside className="w-full lg:w-64 bg-[#161b22] border-b lg:border-b-0 lg:border-r border-[#30363d] flex flex-col shrink-0 z-20">
+        <div className="p-4 lg:p-6 flex items-center gap-3 border-b border-[#30363d] shrink-0">
           <Calculator className="w-6 h-6 text-emerald-400" />
           <h1 className="text-xl font-semibold tracking-tight text-white mr-auto">{t('app_title')}</h1>
-          <div className="flex md:hidden items-center gap-1.5">
+          <div className="flex lg:hidden items-center gap-1.5">
             <button
               onClick={() => setIsResetOpen(true)}
               className="p-1.5 text-neutral-500 hover:text-neutral-300 bg-[#0d1117] border border-[#30363d] rounded-lg transition-colors"
@@ -1216,10 +1216,10 @@ export default function App() {
           </div>
         </div>
         
-        <nav className="flex-none md:flex-1 overflow-x-auto md:overflow-y-auto p-3 md:p-4 flex flex-row md:flex-col gap-2 space-y-0 md:space-y-1.5 compact-scrollbar">
+        <nav className="flex-none lg:flex-1 overflow-x-auto lg:overflow-y-auto p-3 lg:p-4 flex flex-row lg:flex-col gap-2 space-y-0 lg:space-y-1.5 compact-scrollbar">
           <button 
             onClick={() => setActiveTab('dashboard')}
-            className={`flex-none md:w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'dashboard' ? 'bg-emerald-500/10 text-emerald-400' : 'text-neutral-400 hover:bg-[#30363d]/30 hover:text-neutral-200'}`}
+            className={`flex-none lg:w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'dashboard' ? 'bg-emerald-500/10 text-emerald-400' : 'text-neutral-400 hover:bg-[#30363d]/30 hover:text-neutral-200'}`}
           >
             <LayoutDashboard className="w-4 h-4" />
             {t('nav_overview')}
@@ -1227,7 +1227,7 @@ export default function App() {
           
           <button 
             onClick={() => setActiveTab('accounts')}
-            className={`flex-none md:w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'accounts' ? 'bg-emerald-500/10 text-emerald-400' : 'text-neutral-400 hover:bg-[#30363d]/30 hover:text-neutral-200'}`}
+            className={`flex-none lg:w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'accounts' ? 'bg-emerald-500/10 text-emerald-400' : 'text-neutral-400 hover:bg-[#30363d]/30 hover:text-neutral-200'}`}
           >
             <PiggyBank className="w-4 h-4" />
             {t('nav_accounts')}
@@ -1235,7 +1235,7 @@ export default function App() {
           
           <button 
             onClick={() => setActiveTab('purchases')}
-            className={`flex-none md:w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'purchases' ? 'bg-emerald-500/10 text-emerald-400' : 'text-neutral-400 hover:bg-[#30363d]/30 hover:text-neutral-200'}`}
+            className={`flex-none lg:w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'purchases' ? 'bg-emerald-500/10 text-emerald-400' : 'text-neutral-400 hover:bg-[#30363d]/30 hover:text-neutral-200'}`}
           >
             <ShoppingBag className="w-4 h-4" />
             {t('nav_purchases')}
@@ -1243,21 +1243,21 @@ export default function App() {
           
           <button 
             onClick={() => setActiveTab('payments')}
-            className={`flex-none md:w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'payments' ? 'bg-emerald-500/10 text-emerald-400' : 'text-neutral-400 hover:bg-[#30363d]/30 hover:text-neutral-200'}`}
+            className={`flex-none lg:w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'payments' ? 'bg-emerald-500/10 text-emerald-400' : 'text-neutral-400 hover:bg-[#30363d]/30 hover:text-neutral-200'}`}
           >
             <CalendarDays className="w-4 h-4" />
             {t('nav_payments')}
           </button>
           <button 
             onClick={() => setActiveTab('transactions')}
-            className={`flex-none md:w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'transactions' ? 'bg-emerald-500/10 text-emerald-400' : 'text-neutral-400 hover:bg-[#30363d]/30 hover:text-neutral-200'}`}
+            className={`flex-none lg:w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'transactions' ? 'bg-emerald-500/10 text-emerald-400' : 'text-neutral-400 hover:bg-[#30363d]/30 hover:text-neutral-200'}`}
           >
             <Repeat className="w-4 h-4" />
             {t('nav_transactions') || 'Transactions'}
           </button>
         </nav>
 
-        <div className="flex items-center justify-between gap-2 border-t border-[#30363d] px-3 py-2 md:px-4">
+        <div className="flex items-center justify-between gap-2 border-t border-[#30363d] px-3 py-2 lg:px-4">
           <div className="min-w-0">
             <p className="truncate text-xs font-medium text-neutral-300">
               {session?.user.email || (language === 'ru' ? 'Гостевой режим' : 'Guest mode')}
@@ -1305,7 +1305,7 @@ export default function App() {
           </button>
         </div>
 
-        <div className="hidden md:flex p-4 border-t border-[#30363d] flex-col gap-2.5 shrink-0">
+        <div className="hidden lg:flex p-4 border-t border-[#30363d] flex-col gap-2.5 shrink-0">
           <div className="grid grid-cols-2 gap-2">
             <button 
               onClick={() => openExportModal(activeTab === 'accounts' ? 'accounts' : activeTab === 'payments' ? 'payments' : activeTab === 'purchases' ? 'goals_purchases' : activeTab === 'transactions' ? 'transactions' : 'full_report')}
@@ -3547,8 +3547,8 @@ function DashboardCard({
         isClickable ? 'cursor-pointer hover:border-emerald-500/40 hover:bg-[#161b22]/95' : 'hover:border-[#30363d]/80'
       }`}
     >
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2.5 min-w-0">
+      <div className="dashboard-card-header flex items-center justify-between gap-2">
+        <div className="dashboard-card-heading flex items-center gap-2.5 min-w-0">
           <div className="shrink-0 text-neutral-300 p-1.5 bg-[#0d1117] rounded-lg border border-[#30363d]/60">{icon}</div>
           <h3 className="font-semibold text-xs text-neutral-300 uppercase tracking-wider leading-snug truncate">{title}</h3>
         </div>

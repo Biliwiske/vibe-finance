@@ -70,7 +70,7 @@ export function AuthScreen({ language, isLoading, authError, onGuest }: AuthScre
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#0d1117] px-4 py-8 text-neutral-200">
+    <main className="safe-area-page flex items-center justify-center bg-[#0d1117] text-neutral-200">
       <section className="w-full max-w-md rounded-2xl border border-[#30363d] bg-[#161b22] p-6 shadow-2xl sm:p-8">
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-white">Vibe Finance</h1>

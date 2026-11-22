@@ -1001,7 +1001,7 @@ export function ImportModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 safe-area-overlay-compact bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
       <div 
         className="bg-[#161b22] border border-[#30363d] rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden"
         onClick={e => e.stopPropagation()}
