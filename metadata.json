@@ -1,0 +1,6 @@
+{
+  "name": "Vibe Finance",
+  "description": "A forward-looking personal finance dashboard that forecasts your free cash flow based on future obligations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

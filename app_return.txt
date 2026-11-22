@@ -1,0 +1,156 @@
+
+  return (
+    <div className="h-screen w-full bg-[#0d1117] text-neutral-200 overflow-hidden flex flex-col font-sans">
+      <div className="flex-1 flex flex-col gap-4 p-4 lg:p-6 max-w-[1600px] w-full mx-auto min-h-0">
+        
+        <header className="flex items-center justify-between gap-4 shrink-0">
+          <div className="flex items-center gap-3">
+            <Calculator className="w-6 h-6 text-emerald-400" />
+            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-white">
+              {t('app_title')}
+            </h1>
+          </div>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={handleExportCSV}
+              className="px-3 py-1.5 flex items-center gap-2 bg-[#161b22] border border-[#30363d] rounded-lg text-sm font-medium text-neutral-300 hover:text-white hover:border-emerald-500/50 transition-colors outline-none focus:border-emerald-500/50"
+              title={t('export_csv')}
+            >
+              <Download className="w-4 h-4" />
+              <span className="hidden sm:inline">{t('export_csv')}</span>
+            </button>
+            <select 
+              value={language} 
+              onChange={e => setLanguage(e.target.value as 'en' | 'ru')} 
+              className="bg-[#161b22] border border-[#30363d] rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-300 outline-none focus:border-emerald-500/50 appearance-none"
+            >
+              <option value="en">EN</option>
+              <option value="ru">RU</option>
+            </select>
+            <select 
+              value={currency} 
+              onChange={e => setCurrency(e.target.value as any)} 
+              className="bg-[#161b22] border border-[#30363d] rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-300 outline-none focus:border-emerald-500/50 appearance-none"
+            >
+              <option value="USD">USD ($)</option>
+              <option value="EUR">EUR (€)</option>
+              <option value="RUB">RUB (₽)</option>
+              <option value="GBP">GBP (£)</option>
+            </select>
+          </div>
+        </header>
+
+        <PaymentNotifications payments={payments} accounts={accounts} t={t} currency={currency} lang={language} />
+
+        {/* Dashboard Forecast Engine - Compact 1 Row */}
+        <motion.section 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex overflow-x-auto divide-x divide-[#30363d] border border-[#30363d] rounded-xl bg-[#161b22] shrink-0 compact-scrollbar"
+        >
+          <DashboardCard 
+            title={t('total_balance')} 
+            amount={totalBalance} 
+            currency={currency}
+            lang={language}
+            icon={<Wallet className="w-4 h-4" />} 
+          />
+          <DashboardCard
+            title={t('capital_after_purchases')}
+            amount={capitalAfterPurchases}
+            currency={currency}
+            lang={language}
+            icon={<ShoppingBag className="w-4 h-4" />}
+          />
+          <DashboardCard 
+            title={t('monthly_income')} 
+            amount={totalIncome} 
+            currency={currency}
+            lang={language}
+            icon={<Briefcase className="w-4 h-4" />} 
+            subtitle={t('income_desc')}
+          />
+          <DashboardCard 
+            title={t('obligations')} 
+            amount={totalObligations} 
+            currency={currency}
+            lang={language}
+            icon={<CalendarDays className="w-4 h-4" />} 
+            isNegative 
+          />
+          <DashboardCard 
+            title={t('monthly_free_cash')} 
+            amount={freeCashFlow} 
+            currency={currency}
+            lang={language}
+            icon={<TrendingUp className="w-4 h-4" />}
+            subtitle={t('free_cash_desc')}
+            isHighlight
+            isNegative={freeCashFlow < 0}
+          />
+        </motion.section>
+
+        <AnalyticsManager accounts={accounts} payments={displayPayments} salary={salary} goals={goals} purchases={purchases} t={t} currency={currency} lang={language} />
+
+        {/* 2-Column Bento Grid */}
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0">
+          
+          {/* Left Column (5fr) */}
+          <div className="lg:col-span-5 flex flex-col gap-4 min-h-0 overflow-y-auto compact-scrollbar pr-1 pb-4">
+            <AccountManager 
+              accounts={accounts} 
+              onAdd={addAccount} 
+              onEdit={editAccount} 
+              onRemove={removeAccount} 
+              salary={salary}
+              setSalary={setSalary}
+              t={t} 
+              currency={currency} 
+              lang={language} 
+            />
+            <GoalManager
+              goals={goals}
+              onAdd={addGoal}
+              onEdit={editGoal}
+              onRemove={removeGoal}
+              t={t}
+              currency={currency}
+              lang={language}
+              freeCash={freeCashFlow}
+            />
+          </div>
+
+          {/* Right Column (7fr) */}
+          <div className="lg:col-span-7 flex flex-col gap-4 min-h-0 overflow-y-auto compact-scrollbar pr-1 pb-4">
+            <PaymentManager 
+              payments={displayPayments.sort((a,b) => {
+                if (a.isFlexible && !b.isFlexible) return -1;
+                if (!a.isFlexible && b.isFlexible) return 1;
+                if (a.isFlexible && b.isFlexible) return 0;
+                return new Date(a.date!).getTime() - new Date(b.date!).getTime();
+              })} 
+              onAdd={addPayment} 
+              onEdit={editPayment}
+              onRemove={removePayment} 
+              onToggle={togglePaymentActive} 
+              t={t} 
+              currency={currency} 
+              lang={language} 
+              accounts={accounts}
+            />
+            <PurchaseManager
+              purchases={purchases || []}
+              onAdd={addPurchase}
+              onEdit={editPurchase}
+              onRemove={removePurchase}
+              t={t}
+              currency={currency}
+              lang={language}
+            />
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
