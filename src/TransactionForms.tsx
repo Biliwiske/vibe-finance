@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { formatMoney } from './utils';
-import { Recurrence, Category } from './types';
+import { Recurrence, Category, AccountType } from './types';
 import { 
   Wallet, X, Search, CheckCircle2, ChevronLeft, ChevronRight, ChevronDown, ChevronUp,
   Calendar, MessageSquare, QrCode, Repeat, History, Clock, Check, Trash2,
@@ -24,6 +24,21 @@ export const FULL_BANKS = [
   { id: 'revolut', name: 'Revolut', sub: 'Весь мир • 1 530 человек', icon: 'R', color: 'text-black', bg: 'bg-white', logo: null },
   { id: 'none', name: 'Другой / Наличные', sub: '', icon: '💰', color: 'text-white', bg: 'bg-neutral-700', logo: null }
 ];
+
+function getAccountTypeLabel(type: AccountType | undefined, lang: string) {
+  const labels: Record<AccountType, [string, string]> = {
+    checking: ['Карта', 'Card'],
+    credit: ['Кредитная карта', 'Credit card'],
+    savings: ['Накопительный счёт', 'Savings account'],
+    deposit: ['Вклад', 'Deposit'],
+    cash: ['Наличные', 'Cash'],
+    crypto: ['Криптовалюта', 'Cryptocurrency'],
+    debt: ['Кредит / долг', 'Loan / debt'],
+  };
+
+  const [ru, en] = labels[type || 'checking'];
+  return lang === 'ru' ? ru : en;
+}
 
 export const CATEGORY_COLORS: Record<string, string> = {
   yellow: 'text-yellow-500 border-yellow-500 bg-yellow-500/10',
@@ -690,7 +705,7 @@ export function NewTransactionForm({
                       {selectedAcc ? selectedAcc.name : (lang === 'ru' ? 'Выберите счёт' : 'Select account')}
                     </span>
                     <span className="text-[11px] text-neutral-400 truncate block">
-                      {bankInfo ? bankInfo.name : ''}
+                      {bankInfo ? `${getAccountTypeLabel(selectedAcc?.type, lang)} · ${bankInfo.name}` : getAccountTypeLabel(selectedAcc?.type, lang)}
                     </span>
                   </div>
                 </div>
@@ -1026,7 +1041,7 @@ export function NewTransactionForm({
                               {acc.name}
                             </span>
                             <span className="text-[11px] text-neutral-400 block truncate">
-                              {bInfo ? bInfo.name : ''}
+                              {bInfo ? `${getAccountTypeLabel(acc.type, lang)} · ${bInfo.name}` : getAccountTypeLabel(acc.type, lang)}
                             </span>
                           </div>
                         </div>
