@@ -632,13 +632,13 @@ export function ExportModal({
 <head>
 <meta charset="utf-8">
 <style>
-  body { font-family: Calibri, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 11pt; color: #1f2937; }
+  body { font-family: Inter, sans-serif; font-size: 11pt; color: #1f2937; }
   table { border-collapse: collapse; margin-bottom: 24px; width: 100%; }
   th { background-color: #0f766e; color: #ffffff; font-weight: bold; border: 1px solid #115e59; padding: 8px 10px; text-align: left; }
   td { border: 1px solid #d1d5db; padding: 6px 10px; }
   tr:nth-child(even) { background-color: #f9fafb; }
   .section-title { font-size: 14pt; font-weight: bold; color: #0f766e; padding: 12px 0 6px; }
-  .number { text-align: right; font-family: monospace; }
+  .number { text-align: right; font-family: Inter, sans-serif; }
   .income { color: #059669; font-weight: bold; }
   .expense { color: #dc2626; font-weight: bold; }
   .badge-untouched { color: #059669; font-weight: bold; }
@@ -761,7 +761,7 @@ export function ExportModal({
         const acc = accounts.find(a => a.id === tx.accountId);
         const isIncome = tx.type === 'income';
         return `<tr>
-          <td style="font-family: monospace;">${tx.date}</td>
+          <td style="font-family: Inter, sans-serif;">${tx.date}</td>
           <td class="${isIncome ? 'income' : 'expense'}">${isIncome ? (lang === 'ru' ? 'Доход' : 'Income') : (lang === 'ru' ? 'Расход' : 'Expense')}</td>
           <td class="number ${isIncome ? 'income' : 'expense'}">${isIncome ? '+' : '-'}${formatMoney(tx.amount, currency, lang)}</td>
           <td><b>${catMeta.parentName || catMeta.name}</b></td>
@@ -910,12 +910,12 @@ export function ExportModal({
   <title>${title}</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0d1117; color: #e6edf3; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
+    body { font-family: Inter, sans-serif; background: #0d1117; color: #e6edf3; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
     .card { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 32px 28px; max-width: 640px; width: 100%; box-shadow: 0 25px 50px rgba(0,0,0,0.6); text-align: center; }
     .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); border-radius: 20px; color: #34d399; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
     h1 { margin: 0 0 6px; font-size: 22px; color: #58a6ff; }
     .sub { color: #8b949e; font-size: 13px; margin: 0 0 16px; }
-    .filename { background: #0d1117; border: 1px solid #30363d; padding: 12px 16px; border-radius: 10px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 14px; color: #7ee787; word-break: break-all; margin-bottom: 24px; font-weight: bold; }
+    .filename { background: #0d1117; border: 1px solid #30363d; padding: 12px 16px; border-radius: 10px; font-family: Inter, sans-serif; font-size: 14px; color: #7ee787; word-break: break-all; margin-bottom: 24px; font-weight: bold; }
     .actions { display: flex; flex-direction: column; gap: 10px; }
     @media (min-width: 480px) { .actions { flex-direction: row; } }
     .btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 18px; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none; border: none; cursor: pointer; transition: all 0.15s ease; user-select: none; }
@@ -927,7 +927,7 @@ export function ExportModal({
     .tip { color: #8b949e; font-size: 12px; line-height: 1.5; margin-top: 18px; }
     .preview-box { margin-top: 20px; text-align: left; }
     .preview-box label { font-size: 11px; font-weight: 600; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; }
-    textarea { width: 100%; height: 140px; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; color: #c9d1d9; font-family: monospace; font-size: 11px; padding: 12px; resize: vertical; outline: none; }
+    textarea { width: 100%; height: 140px; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; color: #c9d1d9; font-family: Inter, sans-serif; font-size: 11px; padding: 12px; resize: vertical; outline: none; }
     .close-link { display: inline-block; margin-top: 14px; font-size: 12px; color: #8b949e; text-decoration: underline; cursor: pointer; }
     .close-link:hover { color: #c9d1d9; }
   </style>

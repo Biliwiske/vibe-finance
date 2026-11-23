@@ -1,10 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "Inter", sans-serif;
 }
 
 body {
+  font-family: "Inter", sans-serif;
   @apply bg-[#0d1117] text-neutral-200 antialiased selection:bg-emerald-900 selection:text-emerald-50;
 }
 

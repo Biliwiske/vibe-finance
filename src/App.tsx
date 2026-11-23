@@ -1404,9 +1404,6 @@ export default function App() {
                 onAdd={addAccount} 
                 onEdit={editAccount} 
                 onRemove={removeAccount} 
-                onOpenReset={() => setIsResetOpen(true)}
-                salary={salary}
-                setSalary={setSalary}
                 t={t} 
                 currency={currency} 
                 lang={language} 
@@ -3937,7 +3934,7 @@ function AccountForm({
   );
 }
 
-function AccountManager({ accounts, onAdd, onEdit, onRemove, onOpenReset, salary, setSalary, t, currency, lang }: any) {
+function AccountManager({ accounts, onAdd, onEdit, onRemove, t, currency, lang }: any) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [calcId, setCalcId] = useState<string | null>(null);
   const [calcAmount, setCalcAmount] = useState('');
@@ -4204,55 +4201,56 @@ function AccountManager({ accounts, onAdd, onEdit, onRemove, onOpenReset, salary
     }).sort((a, b) => b.totalBalance - a.totalBalance);
   }, [accounts, lang]);
 
-  // Product Type Metadata helper
+  // Product type badges use color; rates and yields remain plain muted text.
   const getProductTypeMeta = (accType?: AccountType) => {
     switch (accType) {
       case 'savings':
         return {
           label: lang === 'ru' ? 'Накопительный' : 'Savings',
-          style: 'bg-blue-500/10 text-blue-400 border-blue-500/30'
+          style: 'bg-blue-500/10 text-blue-300 border-blue-500/30'
         };
       case 'deposit':
         return {
           label: lang === 'ru' ? 'Вклад' : 'Deposit',
-          style: 'bg-teal-500/10 text-teal-400 border-teal-500/30'
+          style: 'bg-green-500/10 text-green-300 border-green-500/30'
         };
       case 'cash':
         return {
           label: lang === 'ru' ? 'Наличные' : 'Cash',
-          style: 'bg-green-500/10 text-green-400 border-green-500/30'
+          style: 'bg-gray-500/10 text-gray-300 border-gray-500/30'
         };
       case 'credit':
         return {
           label: lang === 'ru' ? 'Карта (кредит)' : 'Credit Card',
-          style: 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+          style: 'bg-amber-500/10 text-amber-300 border-amber-500/30'
         };
       case 'debt':
         return {
           label: lang === 'ru' ? 'Кредит' : 'Loan',
-          style: 'bg-red-500/10 text-red-400 border-red-500/30'
+          style: 'bg-red-500/10 text-red-300 border-red-500/30'
         };
       case 'crypto':
         return {
           label: lang === 'ru' ? 'Крипто' : 'Crypto',
-          style: 'bg-purple-500/10 text-purple-400 border-purple-500/30'
+          style: 'bg-purple-500/10 text-purple-300 border-purple-500/30'
         };
       case 'checking':
       default:
         return {
           label: lang === 'ru' ? 'Карта' : 'Card',
-          style: 'bg-[#0d1117] text-neutral-300 border-[#30363d]'
+          style: 'bg-gray-500/10 text-gray-300 border-gray-500/30'
         };
     }
   };
 
-  // Render a Single Product Row (Clean, high-legibility, with interest rate badge)
+  // Render product details while keeping rates and yields separate from type badges.
   const renderProductRow = (acc: Account) => {
-    const isCredit = acc.type === 'credit';
-    const limit = acc.creditLimit || acc.balance;
-    const debt = isCredit ? Math.max(0, limit - acc.balance) : 0;
-    const monthlyYield = acc.interestRate && acc.balance > 0 ? (acc.balance * (acc.interestRate / 100)) / 12 : 0;
     const typeMeta = getProductTypeMeta(acc.type);
+    const hasInterestRate = typeof acc.interestRate === 'number' && Number.isFinite(acc.interestRate) && acc.interestRate > 0;
+    const monthlyYield = (acc.type === 'savings' || acc.type === 'deposit') && hasInterestRate && acc.balance > 0
+      ? (acc.balance * (acc.interestRate / 100)) / 12
+      : 0;
+    const hasDisplayableMonthlyYield = Number.isFinite(monthlyYield) && Math.round(monthlyYield) > 0;
 
     return calcId === acc.id ? (
       <motion.div 
@@ -4290,67 +4288,43 @@ function AccountManager({ accounts, onAdd, onEdit, onRemove, onOpenReset, salary
       <div 
         key={acc.id}
         onClick={() => startEditing(acc)}
-        className="flex items-center justify-between p-3.5 sm:px-4 hover:bg-[#30363d]/25 transition-all cursor-pointer group"
+        className="flex items-center justify-between px-3 sm:px-4 py-2.5 hover:bg-[#30363d]/25 transition-all cursor-pointer group"
       >
-        <div className="flex flex-col gap-1.5 min-w-0 pr-3">
-          <span className="font-semibold text-sm sm:text-base text-neutral-100 group-hover:text-emerald-400 transition-colors truncate">
-            {acc.name}
-          </span>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            {/* Interest Rate Badge (Distinctive Green Pill matching the user's mockup!) */}
-            {acc.interestRate !== undefined && acc.interestRate !== null && acc.interestRate > 0 ? (
-              <span className="text-[11px] px-2.5 py-0.5 rounded-full font-semibold bg-emerald-500/15 border border-emerald-500/35 text-emerald-400 font-mono shadow-sm flex items-center gap-1">
-                {acc.interestRate}% {lang === 'ru' ? 'годовых' : 'APY'}
-              </span>
-            ) : null}
-
-            {/* Product Type Badge: Карта, Накопительный, Вклад, Наличные */}
-            <span className={`text-[10px] px-2 py-0.5 rounded-md font-medium border ${typeMeta.style}`}>
+        <div className="flex flex-col gap-1 min-w-0 pr-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <span className="min-w-0 truncate text-base font-medium text-neutral-100 transition-colors group-hover:text-emerald-400">
+              {acc.name}
+            </span>
+            <span className={`shrink-0 rounded-md border px-2 py-0.5 text-xs font-medium ${typeMeta.style}`}>
               {typeMeta.label}
             </span>
-
-            {/* Credit Grace Days */}
-            {isCredit && acc.gracePeriodDays && (
-              <span className="text-[10px] px-2 py-0.5 rounded-md font-medium bg-amber-500/10 text-amber-400 border border-amber-500/30">
-                {acc.gracePeriodDays} {lang === 'ru' ? 'дней грейс' : 'days grace'}
-              </span>
-            )}
-
-            {/* Estimated monthly yield badge for deposits & savings */}
-            {monthlyYield > 0 && (
-              <span className="text-[10px] text-neutral-400 font-mono hidden sm:inline">
-                ~+{formatMoney(monthlyYield, currency, lang)}/{lang === 'ru' ? 'мес' : 'mo'}
-              </span>
-            )}
           </div>
+          {hasInterestRate && (
+            <span className="text-xs text-gray-500">
+              {acc.interestRate}% {lang === 'ru' ? 'годовых' : 'APY'}
+            </span>
+          )}
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">
-          <div className="text-right">
-            <span className="font-bold text-sm sm:text-base font-mono text-neutral-100 block">
+        <div className="flex items-center gap-2 shrink-0">
+          {hasInterestRate && (
+            <button
+              onClick={(e) => startCalc(acc, e)}
+              className="hidden xl:block text-neutral-400 hover:text-emerald-400 transition-all bg-[#0d1117] border border-[#30363d] rounded-md p-1.5 opacity-0 group-hover:opacity-100"
+              title={lang === 'ru' ? 'Калькулятор доходности' : 'Calculator'}
+            >
+              <Calculator className="w-3.5 h-3.5" />
+            </button>
+          )}
+          <div className="flex items-baseline justify-end gap-2">
+            <span className="text-base font-semibold font-mono text-neutral-100 whitespace-nowrap">
               {formatMoney(acc.balance, currency, lang)}
             </span>
-            {isCredit && debt > 0 && (
-              <span className="text-[10px] text-amber-400 font-mono block">
-                {lang === 'ru' ? 'Долг:' : 'Debt:'} -{formatMoney(debt, currency, lang)}
+            {hasDisplayableMonthlyYield && (
+              <span className="text-xs text-gray-500 whitespace-nowrap">
+                +{formatMoney(monthlyYield, currency, lang)}/{lang === 'ru' ? 'мес' : 'mo'}
               </span>
             )}
-          </div>
-
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            {acc.interestRate && (
-              <button 
-                onClick={(e) => startCalc(acc, e)} 
-                className="text-neutral-400 hover:text-emerald-400 transition-all bg-[#0d1117] border border-[#30363d] rounded-md p-1.5"
-                title={lang === 'ru' ? 'Калькулятор доходности' : 'Calculator'}
-              >
-                <Calculator className="w-3.5 h-3.5" />
-              </button>
-            )}
-            <div className="text-neutral-400 hover:text-white transition-colors p-1.5 bg-[#0d1117] rounded-md border border-[#30363d]">
-              <Pencil className="w-3.5 h-3.5" />
-            </div>
           </div>
         </div>
       </div>
@@ -4358,49 +4332,54 @@ function AccountManager({ accounts, onAdd, onEdit, onRemove, onOpenReset, salary
   };
 
   return (
-    <section className="flex flex-col bg-[#161b22] border border-[#30363d] rounded-2xl p-4 sm:p-5 gap-4 shrink-0 shadow-sm">
+    <section className="mx-auto flex w-full max-w-[1200px] flex-col bg-[#161b22] border border-[#30363d] rounded-2xl p-4 sm:p-5 gap-4 shrink-0 shadow-sm">
       {/* Header & Quick Action Buttons */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#30363d]/50">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 bg-[#0d1117] rounded-xl text-emerald-400 border border-[#30363d]">
-            <Building2 className="w-4 h-4" />
+      <div className="flex flex-col gap-3 pb-2 border-b border-[#30363d]/50">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 bg-[#0d1117] rounded-xl text-emerald-400 border border-[#30363d]">
+              <Building2 className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-white">
+                {lang === 'ru' ? 'Счета и накопления' : 'Accounts & Savings'}
+              </h2>
+            </div>
           </div>
-          <div>
-            <h2 className="text-base font-semibold text-white">
-              {lang === 'ru' ? 'Счета и накопления' : 'Accounts & Savings'}
-            </h2>
-            <p className="text-[11px] text-neutral-400">
-              {lang === 'ru' ? 'Разделение доступных денег и накоплений по банкам' : 'Available funds and savings broken down by bank'}
-            </p>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-2 flex-wrap self-end sm:self-auto">
-          {accounts.length > 0 && onOpenReset && (
+          <div className="flex flex-wrap items-center justify-between gap-2 sm:justify-end">
+            <div className="flex items-center gap-1 p-1 bg-[#0d1117] border border-[#30363d] rounded-xl text-xs">
+              <button
+                onClick={() => setGroupingMode('bank')}
+                className={`px-3 py-1.5 rounded-lg font-medium transition-colors flex items-center gap-1.5 ${
+                  groupingMode === 'bank'
+                    ? 'bg-[#161b22] text-white font-semibold border border-[#30363d] shadow-sm'
+                    : 'text-neutral-400 hover:text-white'
+                }`}
+              >
+                <Building2 className="w-3.5 h-3.5 text-yellow-400" />
+                <span>{lang === 'ru' ? 'По банкам' : 'By Banks'}</span>
+              </button>
+              <button
+                onClick={() => setGroupingMode('category')}
+                className={`px-3 py-1.5 rounded-lg font-medium transition-colors flex items-center gap-1.5 ${
+                  groupingMode === 'category'
+                    ? 'bg-[#161b22] text-white font-semibold border border-[#30363d] shadow-sm'
+                    : 'text-neutral-400 hover:text-white'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5 text-emerald-400" />
+                <span>{lang === 'ru' ? 'По типам' : 'By Type'}</span>
+              </button>
+            </div>
+
             <button 
-              onClick={onOpenReset}
-              className="text-xs font-medium text-neutral-400 hover:text-neutral-200 transition-colors px-2.5 py-1.5 rounded-lg bg-[#0d1117] border border-[#30363d] hover:border-neutral-500 flex items-center gap-1.5"
-              title={lang === 'ru' ? 'Сбросить все счета и операции' : 'Reset accounts and transactions'}
+              onClick={() => editingId === 'new' ? cancel() : startAdding('checking')}
+              className="whitespace-nowrap text-xs font-semibold text-neutral-950 bg-emerald-500 hover:bg-emerald-400 transition-colors px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.25)]"
             >
-              <Trash2 className="w-3.5 h-3.5 text-neutral-500" />
-              <span className="hidden sm:inline text-[11px]">{lang === 'ru' ? 'Сброс' : 'Reset'}</span>
+              {editingId === 'new' ? t('cancel') : <><Plus className="w-3.5 h-3.5" /> {lang === 'ru' ? 'Добавить продукт' : t('add_acc')}</>}
             </button>
-          )}
-
-          <button 
-            onClick={() => editingId === 'new' ? cancel() : startAdding('savings')}
-            className="text-xs font-semibold text-teal-300 hover:text-teal-200 transition-colors px-3 py-1.5 rounded-lg bg-teal-500/15 border border-teal-500/35 flex items-center gap-1.5"
-          >
-            <PiggyBank className="w-3.5 h-3.5 text-teal-400" />
-            <span>{lang === 'ru' ? '+ Накопление / Вклад' : '+ Savings / Deposit'}</span>
-          </button>
-
-          <button 
-            onClick={() => editingId === 'new' ? cancel() : startAdding('checking')}
-            className="text-xs font-semibold text-neutral-950 bg-emerald-500 hover:bg-emerald-400 transition-colors px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.25)]"
-          >
-            {editingId === 'new' ? t('cancel') : <><Plus className="w-3.5 h-3.5" /> {lang === 'ru' ? 'Добавить продукт' : t('add_acc')}</>}
-          </button>
+          </div>
         </div>
       </div>
 
@@ -4430,7 +4409,7 @@ function AccountManager({ accounts, onAdd, onEdit, onRemove, onOpenReset, salary
           </div>
 
           <div className="mt-3.5 flex items-baseline justify-between">
-            <span className={tokens.typography.kpiPrimary}>
+            <span className="text-xl sm:text-2xl font-semibold font-mono tracking-tight text-white tabular-nums">
               {formatMoney(totalAvailableFunds, currency, lang)}
             </span>
             <span className="text-xs text-neutral-400 font-mono">
@@ -4465,7 +4444,7 @@ function AccountManager({ accounts, onAdd, onEdit, onRemove, onOpenReset, salary
           </div>
 
           <div className="mt-3.5 flex items-baseline justify-between">
-            <span className={`${tokens.typography.kpiPrimary} text-teal-300`}>
+            <span className="text-xl sm:text-2xl font-semibold font-mono tracking-tight text-teal-300 tabular-nums">
               {formatMoney(totalSavingsFunds, currency, lang)}
             </span>
             <span className="text-xs text-neutral-400 font-mono">
@@ -4483,7 +4462,7 @@ function AccountManager({ accounts, onAdd, onEdit, onRemove, onOpenReset, salary
             <span className="text-neutral-300">
               {lang === 'ru' ? 'Задолженность по кредитным картам:' : 'Credit card debt:'}
             </span>
-            <span className="font-bold font-mono text-amber-400">
+            <span className="font-semibold font-mono text-amber-400">
               -{formatMoney(totalCreditDebt, currency, lang)}
             </span>
           </div>
@@ -4492,50 +4471,6 @@ function AccountManager({ accounts, onAdd, onEdit, onRemove, onOpenReset, salary
           </span>
         </div>
       )}
-
-      {/* View Mode Switcher: By Banks vs By Category */}
-      <div className="flex items-center justify-between pt-1">
-        <div className="flex items-center gap-1 p-1 bg-[#0d1117] border border-[#30363d] rounded-xl text-xs">
-          <button
-            onClick={() => setGroupingMode('bank')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors flex items-center gap-1.5 ${
-              groupingMode === 'bank' 
-                ? 'bg-[#161b22] text-white font-semibold border border-[#30363d] shadow-sm' 
-                : 'text-neutral-400 hover:text-white'
-            }`}
-          >
-            <Building2 className="w-3.5 h-3.5 text-yellow-400" />
-            <span>{lang === 'ru' ? 'По банкам' : 'By Banks'}</span>
-          </button>
-          <button
-            onClick={() => setGroupingMode('category')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors flex items-center gap-1.5 ${
-              groupingMode === 'category' 
-                ? 'bg-[#161b22] text-white font-semibold border border-[#30363d] shadow-sm' 
-                : 'text-neutral-400 hover:text-white'
-            }`}
-          >
-            <Layers className="w-3.5 h-3.5 text-emerald-400" />
-            <span>{lang === 'ru' ? 'По типам' : 'By Type'}</span>
-          </button>
-        </div>
-
-        {/* Monthly Salary Setting Bar (Compact) */}
-        <div className="flex items-center gap-2 bg-[#0d1117] border border-[#30363d] rounded-xl px-3 py-1 text-xs">
-          <Briefcase className="w-3.5 h-3.5 text-neutral-400" />
-          <span className="text-neutral-400 hidden sm:inline">{lang === 'ru' ? 'Зарплата:' : 'Salary:'}</span>
-          <div className="flex items-center">
-            <input
-              type="number"
-              value={salary || ''}
-              onChange={e => setSalary(parseFloat(e.target.value) || 0)}
-              placeholder="0"
-              className="w-20 bg-transparent text-xs font-bold font-mono text-emerald-400 outline-none text-right"
-            />
-            <span className="text-xs font-mono text-neutral-400 ml-1">{currency}</span>
-          </div>
-        </div>
-      </div>
 
       <AnimatePresence>
         {editingId !== null && (
@@ -4594,35 +4529,30 @@ function AccountManager({ accounts, onAdd, onEdit, onRemove, onOpenReset, salary
           /* ========================================================================= */
           /* 2. GROUPED BY BANK (MATCHING THE USER'S ATTACHED SCREENSHOT MOCKUP!)      */
           /* ========================================================================= */
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-            {bankGroups.map(({ bankId, bankName, bankAccounts, totalBalance, totalYield }) => (
+          <div className="mx-auto grid w-full max-w-[1200px] grid-cols-1 gap-6 sm:grid-cols-2 lg:gap-8">
+            {bankGroups.map(({ bankId, bankName, bankAccounts, totalBalance }) => (
               <div 
                 key={bankId} 
                 className={`${tokens.components.card} flex flex-col justify-between`}
               >
                 {/* Bank Card Header */}
-                <div className="flex items-center justify-between p-3.5 sm:p-4 bg-[#161b22] border-b border-[#30363d]/60">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-col gap-2 p-3.5 sm:p-4 bg-[#161b22] border-b border-[#30363d]/60 xl:flex-row xl:items-center xl:justify-between">
+                  <div className="flex min-w-0 items-center gap-3">
                     {renderBankLogo(bankId)}
-                    <div>
-                      <h3 className={tokens.typography.cardTitle}>
+                    <div className="min-w-0">
+                      <h3 className="text-lg font-bold text-neutral-100 leading-tight">
                         {bankName}
                       </h3>
-                      <span className={`${tokens.typography.secondary} mt-0.5 block`}>
+                      <span className={`${tokens.typography.secondary} mt-0.5 block truncate`}>
                         {lang === 'ru' ? 'Банковские продукты' : 'Bank products'} • {bankAccounts.length} {lang === 'ru' ? (bankAccounts.length === 1 ? 'продукт' : 'продукта') : 'products'}
                       </span>
                     </div>
                   </div>
 
-                  <div className="text-right">
-                    <span className={`${tokens.typography.kpiSecondary} text-white block`}>
+                  <div className="self-end text-right xl:self-auto">
+                    <span className="text-2xl font-semibold font-mono tracking-tight text-white tabular-nums block">
                       {formatMoney(totalBalance, currency, lang)}
                     </span>
-                    {totalYield > 0 && (
-                      <span className="text-xs text-emerald-400 font-mono block mt-0.5 font-medium">
-                        +{formatMoney(totalYield, currency, lang)}/{lang === 'ru' ? 'мес' : 'mo'}
-                      </span>
-                    )}
                   </div>
                 </div>
 
@@ -4637,7 +4567,7 @@ function AccountManager({ accounts, onAdd, onEdit, onRemove, onOpenReset, salary
           /* ========================================================================= */
           /* 3. GROUPED BY CATEGORY (Checking / Savings / Deposits / Cash / Debts)      */
           /* ========================================================================= */
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <div className="mx-auto grid w-full max-w-[1200px] grid-cols-1 gap-6 sm:grid-cols-2 lg:gap-8">
             {/* 1. Debit Cards & Checking Accounts */}
             {availableAccounts.filter(a => a.type !== 'cash').length > 0 && (
               <div className="bg-[#0d1117] border border-[#30363d] rounded-2xl overflow-hidden">
